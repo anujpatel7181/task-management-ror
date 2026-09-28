@@ -84,7 +84,7 @@ gem "active_model_serializers", "~> 0.10.14"
 # to make API requests by setting proper CORS headers.
 # Configured in config/initializers/cors.rb
 # ============================================================
-gem "rack-cors", "~> 2.0"
+gem "rack-cors", "~> 3.0"
 
 # ============================================================
 # PERFORMANCE & CACHING
