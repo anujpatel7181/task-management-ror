@@ -326,12 +326,6 @@ def find_commentable
                  end
 end
 ```
-
-### 4. Detailed Step-by-Step Architecture Guide
-For an in-depth architectural deep-dive, see:
-- 📖 [GUIDE.md](file:///Users/anujpatel/Desktop/ror_session/rails_api_learning_hub/GUIDE.md)
-- 🖨️ [GUIDE.html](file:///Users/anujpatel/Desktop/ror_session/rails_api_learning_hub/GUIDE.html) *(Open in a browser and click "Export to PDF")*
-
 ---
 
 ## 🔧 Troubleshooting & Helpful Commands
