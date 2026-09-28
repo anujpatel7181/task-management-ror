@@ -142,9 +142,7 @@ GEM
       activesupport (>= 6.1)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    image_processing (1.14.0)
-      mini_magick (>= 4.9.5, < 6)
-      ruby-vips (>= 2.0.17, < 3)
+    image_processing (2.1.0)
     io-console (0.9.4)
     irb (1.18.0)
       pp (>= 0.6.0)
@@ -181,8 +179,6 @@ GEM
       net-pop
       net-smtp
     marcel (1.2.1)
-    mini_magick (5.4.0)
-      logger
     mini_mime (1.1.5)
     minitest (6.0.6)
       drb (~> 2.0)
@@ -329,9 +325,6 @@ GEM
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
-    ruby-vips (2.3.0)
-      ffi (~> 1.12)
-      logger
     securerandom (0.4.1)
     solid_cable (4.1.0)
       actioncable (>= 7.2)
@@ -402,7 +395,7 @@ DEPENDENCIES
   doorkeeper (~> 5.7)
   factory_bot_rails (~> 6.4)
   faker (~> 3.4)
-  image_processing (~> 1.2)
+  image_processing (~> 2.1)
   kamal
   listen (~> 3.8)
   pg (~> 1.1)
