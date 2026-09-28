@@ -96,11 +96,40 @@ bundle install
 ```
 
 ### 3. Configure Database
-By default, `config/database.yml` connects to PostgreSQL on `localhost` via your local OS user without a password. If your local Postgres requires a username/password, set environment variables:
-```bash
-export PGUSER="postgres"
-export PGPASSWORD="your_password"
+
+The application's `config/database.yml` is configured with flexible defaults that support both environment variables and zero-config local defaults:
+
+```yaml
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV["POSTGRES_USERNAME"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  host: <%= ENV["POSTGRES_HOST"] %>
+  port: <%= ENV["POSTGRES_PORT"] %>
 ```
+
+> [!NOTE]
+> **Environment variables are NOT strictly required.**
+> When `POSTGRES_USERNAME`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` are omitted, Rails and the PostgreSQL driver automatically fall back to local defaults (connecting over Unix domain socket with your current OS user on port 5432).
+
+Choose the approach that matches your environment:
+
+- **Option A: Default Local PostgreSQL (No ENV Needed)**
+  If your PostgreSQL runs locally with standard trust/socket authentication, you do **not** need to set any environment variables. You can proceed directly to step 4.
+
+- **Option B: Custom Credentials or Docker (Using ENV Variables)**
+  If your PostgreSQL setup requires authentication or runs on a custom host/port (e.g., via Docker):
+  ```bash
+  export POSTGRES_USERNAME="postgres"
+  export POSTGRES_PASSWORD="your_password"
+  export POSTGRES_HOST="localhost"
+  export POSTGRES_PORT="5432"
+  ```
+
+- **Option C: Direct Configuration in `config/database.yml`**
+  If you prefer not to use environment variables, you can hardcode your connection parameters directly into [config/database.yml](file:///Users/anujpatel/Desktop/ror_session/rails_api_learning_hub/config/database.yml).
 
 ### 4. Create and Migrate Database
 ```bash
