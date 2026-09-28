@@ -104,7 +104,7 @@ gem "bootsnap", require: false
 # for images attached via Active Storage (has_one_attached,
 # has_many_attached). Required for variants (thumbnails, etc.)
 # ============================================================
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.1"
 
 # ============================================================
 # UTILITIES
