@@ -143,7 +143,7 @@ end
 
 group :development do
   # Listen for file changes to reload in dev.
-  gem "listen", "~> 3.8"
+  gem "listen", "~> 3.10"
 end
 
 group :test do
