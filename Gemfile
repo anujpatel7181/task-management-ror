@@ -17,7 +17,7 @@ gem "rails", "~> 8.1.3", ">= 8.1.3.1"
 # Provides connection pooling, prepared statements, and
 # support for PostgreSQL-specific features (jsonb, arrays, etc.)
 # ============================================================
-gem "pg", "~> 1.1"
+gem "pg", "~> 1.7"
 
 # ============================================================
 # WEB SERVER
