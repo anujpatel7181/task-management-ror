@@ -1,0 +1,477 @@
+{
+  "info": {
+    "_postman_id": "rails-api-learning-hub-collection",
+    "name": "Rails API Learning Hub",
+    "description": "Production-ready, complete API collection for Rails 8 API Hub with Devise, Doorkeeper OAuth2, CanCanCan RBAC, and Active Storage attachments.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "client_id", "value": "UJIBPW_DORIYYn9t5uU5IPSU4P-_sAqSmwnuYrNYkWY" },
+    { "key": "access_token", "value": "" },
+    { "key": "admin_email", "value": "admin@railshub.dev" },
+    { "key": "admin_password", "value": "Admin@123456" },
+    { "key": "alice_email", "value": "alice@railshub.dev" },
+    { "key": "member_password", "value": "Member@123456" },
+    { "key": "project_id", "value": "4" },
+    { "key": "task_id", "value": "13" },
+    { "key": "created_project_id", "value": "" },
+    { "key": "created_task_id", "value": "" },
+    { "key": "created_comment_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication (OAuth2 & Devise)",
+      "item": [
+        {
+          "name": "01 - Get OAuth Token (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "    console.log('Saved access_token:', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type", "value": "password", "type": "text" },
+                { "key": "username", "value": "{{admin_email}}", "type": "text" },
+                { "key": "password", "value": "{{admin_password}}", "type": "text" },
+                { "key": "client_id", "value": "{{client_id}}", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/token",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "token"]
+            },
+            "description": "Requests OAuth2 Bearer token via password flow linked to Devise user. Automatically captures token into collection variable."
+          }
+        },
+        {
+          "name": "02 - Get OAuth Token (Member Alice)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "    console.log('Saved Alice access_token');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "grant_type", "value": "password", "type": "text" },
+                { "key": "username", "value": "{{alice_email}}", "type": "text" },
+                { "key": "password", "value": "{{member_password}}", "type": "text" },
+                { "key": "client_id", "value": "{{client_id}}", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/token",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "token"]
+            },
+            "description": "Requests token for regular member user to test role-based access restrictions."
+          }
+        },
+        {
+          "name": "03 - Register New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"email\": \"developer@railshub.dev\",\n    \"password\": \"Dev@123456\",\n    \"password_confirmation\": \"Dev@123456\",\n    \"full_name\": \"Senior Developer\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "description": "Public registration endpoint that creates a new member account."
+          }
+        },
+        {
+          "name": "04 - Request Password Reset",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"email\": \"alice@railshub.dev\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/password",
+              "host": ["{{base_url}}"],
+              "path": ["users", "password"]
+            },
+            "description": "Devise API endpoint that sends password reset instructions."
+          }
+        },
+        {
+          "name": "05 - Revoke Token (Logout)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "token", "value": "{{access_token}}", "type": "text" },
+                { "key": "client_id", "value": "{{client_id}}", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/revoke",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "revoke"]
+            },
+            "description": "Revokes current token, invalidating it immediately in the database."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Users & Profiles",
+      "item": [
+        {
+          "name": "06 - Get Current User (me)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/users/me", "host": ["{{base_url}}"], "path": ["api", "v1", "users", "me"] }
+          }
+        },
+        {
+          "name": "07 - Update Current User",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"full_name\": \"Alex Admin Senior\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/users/update_me", "host": ["{{base_url}}"], "path": ["api", "v1", "users", "update_me"] }
+          }
+        },
+        {
+          "name": "08 - Get Profile",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/profile", "host": ["{{base_url}}"], "path": ["api", "v1", "profile"] }
+          }
+        },
+        {
+          "name": "09 - Update Profile",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"profile\": {\n    \"bio\": \"Senior Cloud Architect leading backend modernization\",\n    \"website_url\": \"https://railshub.dev\",\n    \"location\": \"San Francisco, CA\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/profile", "host": ["{{base_url}}"], "path": ["api", "v1", "profile"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Projects",
+      "item": [
+        {
+          "name": "10 - List Projects",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/projects", "host": ["{{base_url}}"], "path": ["api", "v1", "projects"] }
+          }
+        },
+        {
+          "name": "11 - Create Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) { pm.collectionVariables.set('created_project_id', jsonData.id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": {\n    \"name\": \"Enterprise Cloud Engine\",\n    \"description\": \"Distributed microservices orchestration platform.\",\n    \"status\": \"active\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/projects", "host": ["{{base_url}}"], "path": ["api", "v1", "projects"] }
+          }
+        },
+        {
+          "name": "12 - Get Project by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}"] }
+          }
+        },
+        {
+          "name": "13 - Update Project",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"project\": {\n    \"name\": \"E-Commerce Platform v2 (Enhanced Edition)\",\n    \"status\": \"active\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}"] }
+          }
+        },
+        {
+          "name": "14 - Delete Project",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{created_project_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{created_project_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Tasks & Sub-Tasks",
+      "item": [
+        {
+          "name": "15 - List Tasks in Project",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}/tasks", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}", "tasks"] }
+          }
+        },
+        {
+          "name": "16 - Create Top-Level Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) { pm.collectionVariables.set('created_task_id', jsonData.id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": {\n    \"title\": \"Implement Real-Time WebSocket Notifications\",\n    \"description\": \"Integrate Solid Cable for instant in-app alerts.\",\n    \"priority\": \"high\",\n    \"status\": \"todo\",\n    \"due_date\": \"2026-11-20T10:00:00Z\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}/tasks", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}", "tasks"] }
+          }
+        },
+        {
+          "name": "17 - Create Nested Sub-Task",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": {\n    \"title\": \"Configure Solid Cable Channels & Consumer\",\n    \"description\": \"Client-side subscription handling and authentication token pass-through.\",\n    \"priority\": \"medium\",\n    \"status\": \"todo\",\n    \"parent_task_id\": {{task_id}}\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}/tasks", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}", "tasks"] }
+          }
+        },
+        {
+          "name": "18 - Get Task by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{task_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{task_id}}"] }
+          }
+        },
+        {
+          "name": "19 - Update Task",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task\": {\n    \"status\": \"in_progress\",\n    \"priority\": \"critical\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{task_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{task_id}}"] }
+          }
+        },
+        {
+          "name": "20 - Delete Task",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{created_task_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{created_task_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Polymorphic Comments",
+      "item": [
+        {
+          "name": "21 - List Project Comments",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}/comments", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}", "comments"] }
+          }
+        },
+        {
+          "name": "22 - Create Project Comment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) { pm.collectionVariables.set('created_comment_id', jsonData.id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comment\": {\n    \"body\": \"Architecture review approved. Ready for deployment.\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/projects/{{project_id}}/comments", "host": ["{{base_url}}"], "path": ["api", "v1", "projects", "{{project_id}}", "comments"] }
+          }
+        },
+        {
+          "name": "23 - List Task Comments",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{task_id}}/comments", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{task_id}}", "comments"] }
+          }
+        },
+        {
+          "name": "24 - Create Task Comment",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comment\": {\n    \"body\": \"PR merged with zero lint errors and 100% test coverage.\"\n  }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{task_id}}/comments", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{task_id}}", "comments"] }
+          }
+        },
+        {
+          "name": "25 - Delete Comment",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/api/v1/comments/{{created_comment_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "comments", "{{created_comment_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Active Storage Attachments",
+      "item": [
+        {
+          "name": "26 - List User Avatars",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/users/5/avatars", "host": ["{{base_url}}"], "path": ["api", "v1", "users", "5", "avatars"] }
+          }
+        },
+        {
+          "name": "27 - Upload User Avatar(s)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "avatars[]", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/api/v1/users/5/avatars", "host": ["{{base_url}}"], "path": ["api", "v1", "users", "5", "avatars"] }
+          }
+        },
+        {
+          "name": "28 - List Task Documents",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{task_id}}/documents", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{task_id}}", "documents"] }
+          }
+        },
+        {
+          "name": "29 - Upload Task Document(s)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}" }] },
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "documents[]", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/api/v1/tasks/{{task_id}}/documents", "host": ["{{base_url}}"], "path": ["api", "v1", "tasks", "{{task_id}}", "documents"] }
+          }
+        }
+      ]
+    }
+  ]
+}
