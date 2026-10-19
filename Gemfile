@@ -68,7 +68,7 @@ gem "doorkeeper", "~> 5.7"
 # Abilities are defined once and applied consistently across
 # all controllers and background jobs.
 # ============================================================
-gem "cancancan", "~> 3.5"
+gem "cancancan", "~> 3.7"
 
 # ============================================================
 # JSON SERIALIZATION
