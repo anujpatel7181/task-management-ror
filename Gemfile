@@ -38,7 +38,7 @@ gem "puma", ">= 5.0"
 # In API-only mode we disable session-based auth and rely
 # on Doorkeeper OAuth tokens instead.
 # ============================================================
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 
 # ============================================================
 # AUTHENTICATION — DOORKEEPER (OAuth2)
