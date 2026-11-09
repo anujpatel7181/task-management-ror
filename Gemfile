@@ -9,7 +9,7 @@ source "https://rubygems.org"
 #   config.api_only = true
 # which strips out middleware unnecessary for JSON APIs.
 # ============================================================
-gem "rails", "~> 8.1.3", ">= 8.1.3.1"
+gem "rails", "~> 8.1.4"
 
 # ============================================================
 # DATABASE
